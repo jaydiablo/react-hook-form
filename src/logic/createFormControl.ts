@@ -759,11 +759,9 @@ export function createFormControl<
 
       if (shouldSkipValidation) {
         if (_proxyFormState.isValid) {
-          if (_options.mode === 'onBlur') {
-            if (isBlurEvent) {
-              _updateValid();
-            }
-          } else {
+          if (_options.mode === 'onBlur' && isBlurEvent) {
+            _updateValid();
+          } else if (!isBlurEvent) {
             _updateValid();
           }
         }
@@ -1021,7 +1019,9 @@ export function createFormControl<
         : isUndefined(value)
           ? getFieldValue(field ? field._f : get(fields, name)._f)
           : value;
-      set(_formValues, name, inputValue);
+      if (disabled || (!disabled && !isUndefined(inputValue))) {
+        set(_formValues, name, inputValue);
+      }
       updateTouchAndDirty(name, inputValue, false, false, true);
     }
   };
